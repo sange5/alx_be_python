@@ -2,16 +2,27 @@
 FAHRENHEIT_TO_CELSIUS_FACTOR = 5 / 9
 CELSIUS_TO_FAHRENHEIT_FACTOR = 9 / 5
 
+def check_conversion_factors():
+    """
+    Check if global conversion factors are defined.
+    """
+    if 'FAHRENHEIT_TO_CELSIUS_FACTOR' not in globals():
+        raise ValueError("FAHRENHEIT_TO_CELSIUS_FACTOR is not defined.")
+    if 'CELSIUS_TO_FAHRENHEIT_FACTOR' not in globals():
+        raise ValueError("CELSIUS_TO_FAHRENHEIT_FACTOR is not defined.")
+
 def convert_to_celsius(fahrenheit):
     """
     Convert Fahrenheit to Celsius using the global conversion factor.
     """
+    check_conversion_factors()
     return (fahrenheit - 32) * FAHRENHEIT_TO_CELSIUS_FACTOR
 
 def convert_to_fahrenheit(celsius):
     """
     Convert Celsius to Fahrenheit using the global conversion factor.
     """
+    check_conversion_factors()
     return (celsius * CELSIUS_TO_FAHRENHEIT_FACTOR) + 32
 
 def main():
