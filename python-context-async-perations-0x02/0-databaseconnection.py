@@ -2,7 +2,7 @@ import sqlite3
 
 class DatabaseConnection:
     """
-    A custom context manager to handle opening and closing database connections automatically.
+    Custom context manager for handling database connections.
     """
 
     def __init__(self, db_name):
@@ -10,16 +10,12 @@ class DatabaseConnection:
         self.connection = None
 
     def __enter__(self):
-        """
-        Open the database connection when entering the context.
-        """
+        """Establish the database connection."""
         self.connection = sqlite3.connect(self.db_name)
         return self.connection
 
     def __exit__(self, exc_type, exc_value, traceback):
-        """
-        Close the database connection when exiting the context.
-        """
+        """Close the database connection."""
         if self.connection:
             self.connection.close()
 
@@ -27,18 +23,21 @@ class DatabaseConnection:
 if __name__ == "__main__":
     db_name = "example.db"
 
-    # Setup: Create the 'users' table and add some sample data for demonstration purposes
-    with DatabaseConnection(db_name) as conn:
+    # Setup: Create the 'users' table and add sample data
+    with sqlite3.connect(db_name) as conn:
         cursor = conn.cursor()
-        cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)")
-        cursor.execute("INSERT INTO users (name) VALUES ('Alice'), ('Bob'), ('Charlie')")
+        cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)")
+        cursor.executemany(
+            "INSERT INTO users (name, age) VALUES (?, ?)",
+            [("Alice", 30), ("Bob", 20), ("Charlie", 35), ("Diana", 45)]
+        )
         conn.commit()
 
-    # Use the context manager to query the database
+    # Use the custom context manager to query the database
     with DatabaseConnection(db_name) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users")
-        results = cursor.fetchall()
-
-        for row in results:
+        rows = cursor.fetchall()
+        print("Query Results:")
+        for row in rows:
             print(row)
